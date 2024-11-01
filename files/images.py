@@ -3,6 +3,8 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import numpy as np
 from keras.models import load_model
 
+model_path = '../model.keras'
+
 def load_and_preprocess_image(image_path):
 
     image = load_img(image_path, target_size=(32,32))
@@ -12,7 +14,7 @@ def load_and_preprocess_image(image_path):
 
     return image
 
-def predict(model_path, image):
+def predict(image):
 
     model = load_model(model_path)
 
