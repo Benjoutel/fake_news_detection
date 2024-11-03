@@ -1,9 +1,12 @@
+
+import tensorflow as tensorflow
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import numpy as np
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
-model_path = '../model.keras'
+model_path ="/Users/najiaraji/code/AurelienCardon/fake_news_detection/model.keras"
+model = load_model(model_path)
 
 def load_and_preprocess_image(image_path):
 
