@@ -3,28 +3,30 @@ import requests
 from PIL import Image
 import io
 
-# URL de l'API FastAPI
 API_URL = "http://localhost:8000/predict"
 
-st.title("Image Classification with FastAPI")
+st.title("Image Classification")
 
-# Uploader un fichier image
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
+uploaded_file = st.file_uploader("Choose an image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
 
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image', use_column_width=True)
-
+    img_bytes = io.BytesIO()
+    image.save(img_bytes, format='PNG')
+    img_bytes = img_bytes.getvalue()
 
     if st.button("Predict"):
 
-        files = {'file': (uploaded_file.name, uploaded_file, uploaded_file.type)}
-        response = requests.post(API_URL, files=files)
+        response = requests.post(API_URL, files={"file": img_bytes})
 
         if response.status_code == 200:
-            result = response.json()
-            st.success(f"Prediction: {result['predicted_class']}")
-            st.write("Prediction Details:", result['prediction'])
+            prediction = response.json().get("prediction")
+            confidence = response.json().get("confidence")
+            st.success(f"Prediction: {prediction}")
+            if confidence:
+                st.write(f"Confidence: {confidence:.2f}%")
         else:
-            st.error("Error in prediction: " + response.json().get('detail', 'Unknown error'))
+            st.error(f"Failed to get prediction. Status code: {response.status_code}")
+            st.write(response.text)
