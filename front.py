@@ -7,7 +7,7 @@ API_URL = "http://localhost:8000/predict"
 
 st.title("Image Classification")
 
-uploaded_file = st.file_uploader("Choose an image", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader("Choose an image")
 
 if uploaded_file is not None:
     st.write(f"Uploaded file type: {uploaded_file.type}")
@@ -21,7 +21,7 @@ if uploaded_file is not None:
 
     if st.button("Predict"):
 
-        response = requests.post(API_URL, files={"file": img_bytes})
+        response = requests.post(API_URL, files={"file": ("image.png", img_bytes, "image/png")})
 
         if response.status_code == 200:
             prediction = response.json().get("prediction")
