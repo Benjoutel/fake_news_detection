@@ -10,9 +10,11 @@ st.title("Image Classification")
 uploaded_file = st.file_uploader("Choose an image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
+    st.write(f"Uploaded file type: {uploaded_file.type}")
 
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image', use_column_width=True)
+
     img_bytes = io.BytesIO()
     image.save(img_bytes, format='PNG')
     img_bytes = img_bytes.getvalue()
