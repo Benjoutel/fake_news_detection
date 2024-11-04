@@ -14,7 +14,7 @@ def index():
     return {'ok': True}
 
 # model
-model_path = "/Users/najiaraji/code/AurelienCardon/fake_news_detection/model.keras"
+model_path = os.path.join("model.keras")
 model = load_model(model_path)
 
 
