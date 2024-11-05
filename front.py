@@ -3,7 +3,7 @@ import requests
 from PIL import Image
 import io
 
-API_URL = "https://fake-news-image-863060191445.europe-west1.run.app/"
+API_URL = "https://fake-news-image-863060191445.europe-west1.run.app/predict"
 
 st.title("Image Classification")
 
