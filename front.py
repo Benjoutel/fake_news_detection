@@ -2,14 +2,12 @@ import streamlit as st
 import requests
 from PIL import Image
 import io
-from streamlit_paste_button import paste_image_button
 
 API_URL = "https://fake-news-image-863060191445.europe-west1.run.app/predict"
 
 st.title("Image Classification")
 
 uploaded_file = st.file_uploader("Choose an image")
-
 
 if uploaded_file is not None:
     st.write(f"Uploaded file type: {uploaded_file.type}")
