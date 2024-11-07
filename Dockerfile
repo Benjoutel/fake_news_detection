@@ -8,4 +8,4 @@ COPY model.keras model.keras
 COPY front.py front.py
 COPY main.py main.py
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8080
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
