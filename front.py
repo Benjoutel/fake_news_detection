@@ -34,33 +34,3 @@ if uploaded_file is not None:
         else:
             st.error(f"Failed to get prediction. Status code: {response.status_code}")
             st.write(response.text)
-
-st.title('Or Paste an image with a button click')
-paste_result = paste_image_button(
-    label="📋 Paste an image",
-    background_color="#FF0000",
-    hover_background_color="#380909",
-    errors='raise'
-)
-
-if paste_result.image_data is not None:
-    st.write('Pasted image:')
-    st.image(paste_result.image_data, use_column_width=True)
-
-    img_bytes = io.BytesIO()
-    paste_image = Image.open(io.BytesIO(paste_result.image_data))
-    paste_image.save(img_bytes, format='PNG')
-    img_bytes = img_bytes.getvalue()
-
-    if st.button("Predict Pasted Image"):
-        response = requests.post(API_URL, files={"file": ("pasted_image.png", img_bytes, "image/png")})
-
-        if response.status_code == 200:
-            prediction = response.json().get("prediction")
-            confidence = response.json().get("confidence")
-            st.success(f"Prediction: {prediction}")
-            if confidence:
-                st.write(f"Confidence: {confidence:.2f}%")
-        else:
-            st.error(f"Failed to get prediction. Status code: {response.status_code}")
-            st.write(response.text)
