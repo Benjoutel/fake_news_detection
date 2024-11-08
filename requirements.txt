@@ -7,3 +7,5 @@ tensorflow
 python-multipart
 pillow
 requests
+transformers
+tf-keras
