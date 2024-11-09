@@ -14,39 +14,44 @@ def index():
     return {'ok': True}
 
 # model
-model_path = "/Users/najiaraji/code/AurelienCardon/fake_news_detection/model.keras"
+model_path = os.path.join("model.keras")
 model = load_model(model_path)
 
 
 def load_and_preprocess_image(image_path):
-    image = load_img(image_path, target_size=(32, 32))
+    image = load_img(image_path, target_size=(224, 224))
     image = img_to_array(image)
     image = preprocess_input(image)
     image = np.expand_dims(image, axis=0)
     return image
 
+from transformers import pipeline
+from PIL import Image
+
+classifier = pipeline("image-classification", model="NYUAD-ComNets/NYUAD_AI-generated_images_detector")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
 
     if file.content_type not in ["image/jpeg", "image/png"]:
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a JPEG or PNG image.")
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a valid image.")
 
     try:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(await file.read())
             tmp_path = tmp.name
 
-        image = load_and_preprocess_image(tmp_path)
+        image = image = Image.open(tmp_path)
 
-        prediction = model.predict(image)
-        predicted_class = np.argmax(prediction, axis=-1)[0]
+        prediction = classifier(image)
+        label = prediction[0]['label']
+        confidence = prediction[0]['score']
 
         os.remove(tmp_path)
 
         return {
-            "prediction": prediction[0].tolist(),
-            "predicted_class": int(predicted_class)
+            "prediction": label,
+            "confidence": confidence
         }
 
     except Exception as e:
@@ -54,4 +59,4 @@ async def predict(file: UploadFile = File(...)):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
