@@ -34,7 +34,7 @@ classifier = pipeline("image-classification", model="NYUAD-ComNets/NYUAD_AI-gene
 async def predict(file: UploadFile = File(...)):
 
     if file.content_type not in ["image/jpeg", "image/png"]:
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a valid image.")
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a JPEG or PNG image.")
 
     try:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
