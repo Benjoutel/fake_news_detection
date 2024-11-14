@@ -114,8 +114,8 @@ def word_embedding(text):
 
 # ensure the TextPayload class is recognized
 class TextPayload(BaseModel):
-    text: str  
-    
+    text: str
+
 # Text prediction endpoint
 @app.post("/predict_text")
 async def predict_text(payload: TextPayload):
