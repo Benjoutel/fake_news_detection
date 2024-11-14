@@ -127,7 +127,7 @@ if uploaded_file:
     # Charger l'image avec PIL, vérifier et convertir pour OpenCV en BGR
     image = Image.open(uploaded_file)
     image_rgb = np.array(image)  # Conversion en format RGB natif
-    st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False, width=200)  # Afficher pour vérifier les couleurs
+    #st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False, width=200)  # Afficher pour vérifier les couleurs
 
     # Convertir l'image pour OpenCV en BGR
     image_cv = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
