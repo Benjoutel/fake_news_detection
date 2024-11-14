@@ -170,7 +170,7 @@ if uploaded_file:
             st.warning("Please enter a valid text headline.")
         else:
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
-            st.write(response)
+
             if response.status_code == 200:
                 prediction = response.json().get("prediction")
                 confidence = response.json().get("confidence")
