@@ -13,7 +13,7 @@ from googlesearch import search
 # URL to use for testing the deployed container
 API_URL = "https://fake-news-image-863060191445.europe-west1.run.app/predict_image"
 
-API_URL_TEXT = "https://fake-news-image-863060191445.europe-west1.run.app/predict_image/predict_text"
+API_URL_TEXT = "https://fake-news-image-863060191445.europe-west1.run.app/predict_text"
 
 # URL to use for local testing image
 #API_URL = "http://localhost:8000/predict_image"
@@ -170,7 +170,7 @@ if uploaded_file:
             st.warning("Please enter a valid text headline.")
         else:
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
-
+            st.write(response)
             if response.status_code == 200:
                 prediction = response.json().get("prediction")
                 confidence = response.json().get("confidence")
