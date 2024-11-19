@@ -6,10 +6,11 @@ import io
 from io import BytesIO
 import cv2
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # need to specify access url to pytesseract for streamlit cloud
+pytesseract.pytesseract.tesseract_cmd = "/opt/homebrew/bin/tesseract"  # need to specify access url to pytesseract for streamlit cloud
 import numpy as np
 from googlesearch import search
 import os
+from call_openai import openai_call_for_fakenews_check
 
 # URL to use for testing the deployed container
 API_URL = "https://fake-news-image-863060191445.europe-west1.run.app/predict_image"
@@ -65,7 +66,7 @@ def extract_images_from_screenshot(image):
         x, y, w, h = cv2.boundingRect(contour)
 
         # Filtrer les petites régions et celles avec un rapport d'aspect extrême
-        if w < 50 or h < 100 or w/h > 20 or h/w > 20:
+        if w < 100 or h < 100 or w/h > 20 or h/w > 20:
             continue
 
         # Extraire la région potentiellement contenant une image
@@ -125,24 +126,49 @@ def analyze_image_with_api(image):
 def check_fake_news_on_google(text):
     # Limiter la recherche aux premiers résultats pour éviter une surcharge
     query = f'"{text}"'
-    st.write(f"Recherche sur Google pour {text}")
 
-    # Effectuer la recherche Google
-    results = list(search(query, num_results=5))  # Limiter à 5 résultats
+    try:
+        results = list(search(query, num_results=5))  # Limiter à 5 résultats
+        
+        if results:
+            # Concaténer les résultats pour OpenAI
+            combined_results = "\n".join(results)
+            
+            # Vérifier la présence de sources fiables
+            trusted_sources = [
+                "france24.com", "minnpost.com", "factcheck.org", "snopes.com",
+                "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"
+            ]
+            
+            # Identifier les sources fiables présentes dans les résultats
+            detected_trusted_sources = [url for url in results if any(source in url for source in trusted_sources)]
+            
+            # Préparer la réponse au format JSON
+            response = {
+                "combined_results": combined_results,
+                "detected_trusted_sources": detected_trusted_sources,
+                "trusted_sources": trusted_sources
+            }
 
-    if results:
-        st.write("Voici les résultats trouvés sur Google :")
-        for url in results:
-            st.write(f"- {url}")
+            if detected_trusted_sources:
+                st.success("👍🏻 Trusted verification sources found in the results.")
+            else:
+                st.info("No trusted verification sources found.")
 
-        # Indiquer si des sites de vérification des faits sont présents dans les résultats
-        trusted_sources = ["france24.com", "minnpost.com", "factcheck.org", "snopes.com", "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"]
-        if any(any(source in url for source in trusted_sources) for url in results):
-            st.success("Warning : The verification sources already dealt with it.")
+            return response
         else:
-            st.info("")
-    else:
-        st.write("")
+            st.write("Aucun résultat trouvé.")
+            return {
+                "combined_results": "",
+                "trusted_sources": []
+            }
+    except Exception as e:
+        st.error(f"Erreur lors de la recherche Google : {e}")
+        return {
+            "combined_results": "",
+            "trusted_sources": [],
+            "error": str(e)
+        }
 
 
 ############# Interface Streamlit ####################
@@ -189,14 +215,12 @@ if uploaded_file:
             st.warning("No image detected.")
 
     with col2:
-        #user_text = st.text_area("Enter the news headline here:")
-
-        #if st.button("Predict Text"):
         if not extracted_text:
             st.warning("No text detected.")
         else:
             st.warning("Text detected")
-            st.markdown(extracted_text)
+            
+            # Analyse du texte avec le modèle textuel
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
 
             if response.status_code == 200:
@@ -207,13 +231,49 @@ if uploaded_file:
                     st.error(f"This news seems to be fake! 📰❌")
                 else:
                     st.success(f"This news seems to be real! 📰✅")
-                st.write(f"Confidence: {confidence*100:.2f}%")
+                st.write(f"Confidence: {confidence * 100:.2f}%")
             else:
                 st.error(f"Failed to get prediction. Status code: {response.status_code}")
                 st.write(response.text)
 
-    if extracted_text:
-        st.subheader("Does this text is known as a fake news ?")
-        check_fake_news_on_google(extracted_text)  # Recherche sur Google pour vérifier la véracité
+    if not extracted_text:
+        st.warning("No text detected.")
     else:
-        st.write("")
+        st.markdown("### Your judge ! Here is some help from Google and OpenAI:")
+        
+        # Afficher les résultats sur Streamlit
+        st.warning("Google search:")
+        
+        # Recherche Google
+        google_results = check_fake_news_on_google(extracted_text)
+
+        if google_results["combined_results"]:
+            st.write("Voici les résultats trouvés sur Google :")
+            
+            # Afficher chaque URL individuellement
+            for url in google_results["combined_results"].split("\n"):
+                st.write(f"- {url}")
+
+            # Afficher les sources fiables détectées
+            if google_results["trusted_sources"]:
+                sources = google_results["trusted_sources"]
+                st.write(f"Trusted sources used : {sources}")
+            else:
+                st.info("Aucune source de vérification fiable détectée.")
+        else:
+            st.error("No results on Google.")
+                
+        # Enrichir le texte avec les résultats de recherche pour OpenAI
+        enriched_text = f"{extracted_text}\n\nContext from Google Search:\n{google_results}"
+        st.warning("OpenAI 👉 Enriching the text with Google Search results for openAI search (gpt-4o model used)...")
+
+        # Appel OpenAI
+        openai_response = openai_call_for_fakenews_check(enriched_text)
+
+        if openai_response:
+            st.markdown(f"\n{openai_response}")
+        else:
+            st.error("Failed to get a response from OpenAI.")
+
+    
+

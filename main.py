@@ -10,6 +10,7 @@ from nltk.stem.snowball import SnowballStemmer
 from pydantic import BaseModel
 from transformers import pipeline
 from PIL import Image
+#from call_openai import openai_call_for_fakenews_check
 import numpy as np
 import tempfile
 import os
@@ -130,11 +131,13 @@ async def predict_text(payload: TextPayload):
         prediction = model_text.predict(padded_text)
         threshold = 0.8
         label = 1 if prediction[0][0] > threshold else 0
+        local_result = "Fake News" if label == 1 else "Real News"
 
+        # Retour des résultats combinés
         return {
             "text": payload.text,
-            "prediction": "Fake News" if label == 1 else "Real News",
-            "confidence": float(prediction[0][0])
+            "local_prediction": local_result,
+            "local_confidence": float(prediction[0][0])
         }
 
     except Exception as e:
