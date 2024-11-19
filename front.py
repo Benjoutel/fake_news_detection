@@ -26,12 +26,13 @@ st.image(os.path.join("logo.png"), width=200)
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
+        <!-- Conteneur de l'image -->
         <div style="flex: 1;">
             <img src="https://via.placeholder.com/150" alt="Image" style="max-width: 100%; height: auto;">
         </div>
-        <div style="flex: 2; padding-left: 20px;">
-            <h1 style="text-align: left; color: purple;">Welcome to The Fake News Detector Application</h1>
-            <p>This application helps you detect fake news by analyzing text and images using advanced AI techniques.</p>
+        <!-- Conteneur du texte -->
+        <div style="flex: 2; padding-left: 20px; display: flex; align-items: center;">
+            <h1 style="text-align: left; color: purple; margin: 0;">Welcome to The Fake News Detector Application</h1>
         </div>
     </div>
     """,
