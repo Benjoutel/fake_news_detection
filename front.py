@@ -138,9 +138,9 @@ def check_fake_news_on_google(text):
         # Indiquer si des sites de vérification des faits sont présents dans les résultats
         trusted_sources = ["bbc.com", "apnews.com", "france24.com", "minnpost.com", "factcheck.org", "snopes.com", "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"]
         if any(any(source in url for source in trusted_sources) for url in results):
-            st.success("Warning : The verification sources already dealt with it.")
+            st.success("Warning : The trusted verification sources already dealt with it.")
         else:
-            st.info("")
+            st.info("No ttrusted verification sources found but you can check the links!")
     else:
         st.write("")
 
@@ -180,11 +180,11 @@ if uploaded_file:
 
                 if prediction:
                     if prediction == "real":
-                        st.success("This image looks real 👍🏻")
+                        st.success("This image looks real 👍🏻!")
                     else:
-                        st.success(f"This image looks AI producted 🤖⚙️🤖")
+                        st.success(f"This image looks AI producted 🤖⚙️🤖!")
 
-                    st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
+                    st.write(f"Confidence : {confidence * 100:.2f}% 🦾!")
         else:
             st.warning("No image detected.")
 
@@ -195,7 +195,7 @@ if uploaded_file:
         if not extracted_text:
             st.warning("No text detected.")
         else:
-            st.warning("Text detected")
+            st.warning("Text detected.")
             st.markdown(extracted_text)
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
 
