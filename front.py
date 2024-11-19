@@ -136,7 +136,7 @@ def check_fake_news_on_google(text):
             st.write(f"- {url}")
 
         # Indiquer si des sites de vérification des faits sont présents dans les résultats
-        trusted_sources = ["france24.com", "minnpost.com", "factcheck.org", "snopes.com", "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"]
+        trusted_sources = ["bbc.com", "apnews.com", "france24.com", "minnpost.com", "factcheck.org", "snopes.com", "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"]
         if any(any(source in url for source in trusted_sources) for url in results):
             st.success("Warning : The verification sources already dealt with it.")
         else:
