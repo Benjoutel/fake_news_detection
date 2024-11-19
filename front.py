@@ -167,9 +167,9 @@ if uploaded_file:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.warning("Image(s) detected.")
         # Vérifier s'il y a des images extraites
         if embedded_images:
+            st.warning("Image(s) detected.")
             for idx, img in enumerate(embedded_images):
                 # Afficher l'image extraite
                 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
