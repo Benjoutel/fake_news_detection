@@ -48,6 +48,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.text("")
+st.text("")
 
 def extract_images_from_screenshot(image):
     # Convertir l'image en niveaux de gris
@@ -214,5 +215,5 @@ if uploaded_file:
     if extracted_text:
         st.subheader("Does this text is known as a fake news ?")
         check_fake_news_on_google(extracted_text)  # Recherche sur Google pour vérifier la véracité
-    else:
-        st.write("No text detected.")
+    #else:
+    #    st.write("No text detected.")
