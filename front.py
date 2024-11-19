@@ -25,7 +25,15 @@ API_URL_TEXT = "https://fake-news-image-863060191445.europe-west1.run.app/predic
 st.image(os.path.join("logo.png"), width=200)
 st.markdown(
     """
-    <h1 style="text-align: center; color: purple;">Welcome to The Fake News Detector Application</h1>
+    <div style="display: flex; align-items: center;">
+        <div style="flex: 1;">
+            <img src="https://via.placeholder.com/150" alt="Image" style="max-width: 100%; height: auto;">
+        </div>
+        <div style="flex: 2; padding-left: 20px;">
+            <h1 style="text-align: left; color: purple;">Welcome to The Fake News Detector Application</h1>
+            <p>This application helps you detect fake news by analyzing text and images using advanced AI techniques.</p>
+        </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
@@ -127,7 +135,7 @@ def check_fake_news_on_google(text):
 
 ############# Interface Streamlit ####################
 
-uploaded_file = st.file_uploader("Téléchargez une capture d'écran", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("Upload your screenshot or image!", type=["png", "jpg", "jpeg"])
 
 if uploaded_file:
     # Charger l'image avec PIL, vérifier et convertir pour OpenCV en BGR
@@ -143,30 +151,30 @@ if uploaded_file:
     extracted_text = extract_text_from_image(image_cv)
 
     # Affichage en colonnes
-    st.markdown("### Résultats d'extraction et d'analyse")
+    st.markdown("### Results of extraction and analysis:")
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Images intégrées détectées")
+        st.subheader("Image(s) detected.")
         # Vérifier s'il y a des images extraites
         if embedded_images:
             for idx, img in enumerate(embedded_images):
                 # Afficher l'image extraite
                 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                st.image(img_rgb, caption=f"Image intégrée {idx + 1}", use_container_width=True)
+                st.image(img_rgb, caption=f"Image integrated {idx + 1}", use_container_width=True)
 
                 # Analyser l'image extraite
                 prediction, confidence, prediction_name = analyze_image_with_api(img)
 
                 if prediction:
                     if prediction == "real":
-                        st.success("Cette image semble être réelle 👍🏻")
+                        st.success("This image looks real 👍🏻")
                     else:
-                        st.success(f"Cette image semble être fausse 🤖⚙️🤖 et produite par {prediction_name}")
+                        st.success(f"This image looks AI producted 🤖⚙️🤖")
 
-                    st.write(f"Confiance de l'analyse : {confidence * 100:.2f}% 🦾")
+                    st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
         else:
-            st.write("Aucune image intégrée détectée.")
+            st.write("No image detected.")
 
     with col2:
         #user_text = st.text_area("Enter the news headline here:")
@@ -193,10 +201,10 @@ if uploaded_file:
 
 
 
-    st.subheader("Texte détecté et vérification de fausses informations")
+    st.subheader("Text detected")
     if extracted_text:
-        #st.markdown(extracted_text)
-        st.write("Vérification : Est-ce que ce texte correspond à une éventuelle fake news connue ?")
+        st.markdown(extracted_text)
+        st.write("Does this text is known as a fake news ?")
         check_fake_news_on_google(extracted_text)  # Recherche sur Google pour vérifier la véracité
     else:
-        st.write("Aucun texte détecté.")
+        st.write("No text detected.")
