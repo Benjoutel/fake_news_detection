@@ -138,11 +138,11 @@ def check_fake_news_on_google(text):
         # Indiquer si des sites de vérification des faits sont présents dans les résultats
         trusted_sources = ["factcheck.org", "snopes.com", "afp.com", "lemonde.fr/verification", "reuters.com/fact-check"]
         if any(any(source in url for source in trusted_sources) for url in results):
-            st.success("Attention : Des sources de vérification des faits ont abordé ce sujet, vérifiez leur contenu.")
+            st.success("Warning : The verification sources already dealt with it.")
         else:
-            st.info("Aucune source de vérification des faits n'a été trouvée parmi les premiers résultats.")
+            st.info("")
     else:
-        st.write("Aucun résultat pertinent trouvé pour ce texte.")
+        st.write("")
 
 
 ############# Interface Streamlit ####################
