@@ -22,13 +22,14 @@ API_URL_TEXT = "https://fake-news-image-863060191445.europe-west1.run.app/predic
 # URL for the text-based fake news prediction
 #API_URL_TEXT = "http://localhost:8000/predict_text"
 
-st.image(os.path.join("logo.png"), width=200)
+image_path = os.path.join("logo.png")
+
 st.markdown(
-    """
+    f"""
     <div style="display: flex; align-items: center;">
         <!-- Conteneur de l'image -->
         <div style="flex: 1;">
-            <img src="https://via.placeholder.com/150" alt="Image" style="max-width: 100%; height: auto;">
+            <img src="data:image/png;base64,{st.image(image_path, output_format='auto')}">
         </div>
         <!-- Conteneur du texte -->
         <div style="flex: 2; padding-left: 20px; display: flex; align-items: center;">
