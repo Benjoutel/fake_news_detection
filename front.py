@@ -167,7 +167,7 @@ if uploaded_file:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Image(s) detected.")
+        st.warning("Image(s) detected.")
         # Vérifier s'il y a des images extraites
         if embedded_images:
             for idx, img in enumerate(embedded_images):
@@ -186,7 +186,7 @@ if uploaded_file:
 
                     st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
         else:
-            st.write("No image detected.")
+            st.warning("No image detected.")
 
     with col2:
         #user_text = st.text_area("Enter the news headline here:")
@@ -195,7 +195,7 @@ if uploaded_file:
         if not extracted_text:
             st.warning("No text detected.")
         else:
-            st.subheader("Text detected")
+            st.warning("Text detected")
             st.markdown(extracted_text)
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
 
