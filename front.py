@@ -22,17 +22,25 @@ API_URL_TEXT = "https://fake-news-image-863060191445.europe-west1.run.app/predic
 # URL for the text-based fake news prediction
 #API_URL_TEXT = "http://localhost:8000/predict_text"
 
-image_path = os.path.join("logo.png")
+import base64
+
+def load_image_as_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        base64_str = base64.b64encode(img_file.read()).decode("utf-8")
+    return base64_str
+
+image_path = "logo.png"
+base64_image = load_image_as_base64(image_path)
 
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
         <!-- Conteneur de l'image -->
         <div style="flex: 1;">
-            <img src="data:image/png;base64,{st.image(image_path, output_format='auto')}">
+            <img src="data:image/png;base64,{base64_image}" alt="Logo" style="max-width: 100%; height: auto; width: 200px;">
         </div>
         <!-- Conteneur du texte -->
-        <div style="flex: 2; padding-left: 20px; display: flex; align-items: center;">
+        <div style="flex: 2; padding-left: 20px;">
             <h1 style="text-align: left; color: purple; margin: 0;">Welcome to The Fake News Detector Application</h1>
         </div>
     </div>
