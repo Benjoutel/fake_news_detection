@@ -6,7 +6,7 @@ import io
 from io import BytesIO
 import cv2
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = "/opt/homebrew/bin/tesseract"  # need to specify access url to pytesseract for streamlit cloud
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # need to specify access url to pytesseract for streamlit cloud
 import numpy as np
 from googlesearch import search
 import os
