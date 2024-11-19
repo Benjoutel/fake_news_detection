@@ -47,6 +47,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.text("")
 
 def extract_images_from_screenshot(image):
     # Convertir l'image en niveaux de gris
@@ -191,8 +192,10 @@ if uploaded_file:
 
         #if st.button("Predict Text"):
         if not extracted_text:
-            st.warning("Please enter a valid text headline.")
+            st.warning("No text detected.")
         else:
+            st.subheader("Text detected")
+            st.markdown(extracted_text)
             response = requests.post(API_URL_TEXT, json={"text": extracted_text})
 
             if response.status_code == 200:
@@ -208,13 +211,8 @@ if uploaded_file:
                 st.error(f"Failed to get prediction. Status code: {response.status_code}")
                 st.write(response.text)
 
-
-
-
-    st.subheader("Text detected")
     if extracted_text:
-        st.markdown(extracted_text)
-        st.write("Does this text is known as a fake news ?")
+        st.subheader("Does this text is known as a fake news ?")
         check_fake_news_on_google(extracted_text)  # Recherche sur Google pour vérifier la véracité
     else:
         st.write("No text detected.")
