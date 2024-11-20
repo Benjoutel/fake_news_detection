@@ -276,7 +276,7 @@ else:
     else:
         st.error("Failed to get a response from OpenAI.")
 
-    st.markdown("#### 4) 🤔 Going further...")
+    st.markdown("#### 4) 📚 Go further...")
     #Display google results
     if google_results["combined_results"]:
         with st.expander("Google search results"):
