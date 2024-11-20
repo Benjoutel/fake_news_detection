@@ -275,13 +275,7 @@ if uploaded_file:
                 # Afficher chaque URL individuellement
                 for url in google_results["combined_results"].split("\n"):
                     st.write(f"- {url}")
-    
-                # Afficher les sources fiables détectées
-                if google_results["trusted_sources"]:
-                    sources = google_results["trusted_sources"]
-                    st.write(f"Trusted sources used : {sources}")
-                else:
-                    st.info("No trusted source detected in the search result.")
+
         else:
             st.error("No results on Google.")
 
