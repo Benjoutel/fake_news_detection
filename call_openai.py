@@ -12,12 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Charger le fichier .env
 load_dotenv()
 API_KEY = os.getenv('OPENAI_BEN_API_KEY')
-# Get key
-if API_KEY:
-    print(f"Votre clé API est : {API_KEY}")
-else:
-    print("Erreur : OPENAI_BEN_API_KEY n'est pas défini.")
-    
+
 ## Défine API url
 url = "https://api.openai.com/v1/chat/completions"
 
@@ -35,23 +30,17 @@ def api_key_testing():
 def openai_call_for_fakenews_check(text):
     ## Define prompt
     prompt = f"""
-        Vous êtes un assistant expert en vérification des faits.
-        Analysez le texte ci-dessous et attribuez un score de confiance (entre 0 et 100%) pour chacune des catégories suivantes :
-        - VRAI : le texte est factuellement correct et basé sur des preuves solides.
-        - POSSIBLE : le texte pourrait être vrai mais manque de preuves suffisantes.
-        - PROBABLE : le texte semble crédible mais ne peut pas être entièrement confirmé. 
-        Ne reponds pas toujorus 0%, 70% et 30% !! Reflechis sur la base de tes connaissances. Quand quelque chose est possible, on ne peut pas avoir un score "VRAI" à 0% mais au moins supérieur car crédible.
-        Pars du principe qu'une reponse possible est très probablement vrai.
-        
-        Fournissez également une brève justification (moins de 100 mots) pour vos scores.
+    You are an expert assistant in fact-checking.  
+        Analyze the text below and assign a confidence score (between 0% and 100%) for each of the following categories:  
+        - TRUE: the text is factually correct and based on solid evidence.  
+        - POSSIBLE: the text could be true but lacks sufficient evidence.  
+        - LIKELY: the text seems credible but cannot be fully confirmed.  
 
-        Texte : "{text}"
+        Do not always respond with the same percentage like 0%, 70%, and 30%! Think critically based on your knowledge. If something is possible, the "TRUE" score cannot be 0% but should be at least higher, as it is plausible. Assume that a possible response is very likely to be true.  
 
-        Réponse attendue au format suivant :
-        - VRAI : X% 
-        - POSSIBLE : Y%
-        - PROBABLE : Z%
-        Justification : [votre justification ici]
+        Also, provide a brief justification (less than 100 words) for your scores.  
+
+        Text: "{text}" 
     """
     
     ## Define model call settings
@@ -92,5 +81,5 @@ def openai_call_for_fakenews_check(text):
     except requests.exceptions.RequestException as e:
         # Capturer et loguer les erreurs
         logging.error(f"Erreur lors de la requête : {str(e)}")
-        logging.error(f"Détails de la réponse : {response.text if 'response' in locals() else 'Pas de réponse'}")
+        logging.error(f"Détails de la réponse : {response.text if 'response' in locals() else 'No response'}")
         return None
