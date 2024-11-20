@@ -150,11 +150,6 @@ def check_fake_news_on_google(text):
                 "trusted_sources": trusted_sources
             }
 
-            if detected_trusted_sources:
-                st.success("👍🏻 Trusted verification sources found in the results.")
-            else:
-                st.info("No trusted verification sources found.")
-
             return response
         else:
             st.write("No result.")
@@ -188,58 +183,62 @@ if uploaded_file:
     embedded_images = extract_images_from_screenshot(image_cv)
     extracted_text = extract_text_from_image(image_cv)
 
-    # Affichage en colonnes
-    st.markdown("### Results of extraction and analysis:")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        # Vérifier s'il y a des images extraites
-        if embedded_images:
-            st.warning("Image(s) detected.")
-            for idx, img in enumerate(embedded_images):
-                # Afficher l'image extraite
-                img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
+    st.markdown("#### 1) 🏞️ Images extraction and analysis")
+    # Vérifier s'il y a des images extraites
+    if embedded_images:
+        st.warning("Image(s) detected.")
+        
+        for idx, img in enumerate(embedded_images):
+            # Afficher l'image extraite
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            with st.expander("Extracted images:"):
                 st.image(img_rgb, caption=f"Image integrated {idx + 1}", use_container_width=True)
 
-                # Analyser l'image extraite
-                prediction, confidence, prediction_name = analyze_image_with_api(img)
+            # Analyser l'image extraite
+            prediction, confidence, prediction_name = analyze_image_with_api(img)
 
-                if prediction:
-                    if prediction == "real":
-                        st.success("This image looks real 👍🏻")
-                    else:
-                        st.success(f"This image looks AI producted 🤖⚙️🤖")
-
-                    st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
-        else:
-            st.warning("No image detected.")
-
-    with col2:
-        if not extracted_text:
-            st.warning("No text detected.")
-        else:
-            st.warning("Text detected")
-            
-            # Analyse du texte avec le modèle textuel
-            response = requests.post(API_URL_TEXT, json={"text": extracted_text})
-
-            if response.status_code == 200:
-                prediction = response.json().get("prediction")
-                confidence = response.json().get("confidence")
-
-                if prediction == "Fake News":
-                    st.error(f"This news seems to be fake! 📰❌")
+            if prediction:
+                if prediction == "real":
+                    st.success("This image looks real 👍🏻")
                 else:
-                    st.success(f"This news seems to be real! 📰✅")
-                st.write(f"Confidence: {confidence * 100:.2f}%")
-            else:
-                st.error(f"Failed to get prediction. Status code: {response.status_code}")
-                st.write(response.text)
+                    st.error(f"This image looks AI producted 🤖⚙️🤖")
 
+                st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
+    else:
+        st.warning("No image detected.")
+
+    
     if not extracted_text:
         st.warning("No text detected.")
     else:
-        st.markdown("### Your judge ! Here is some help from Google and OpenAI:")
+        st.markdown("#### 2) 🔤 Text extraction and analysis")
+        st.warning("Text detected")
+        
+        # Analyse du texte avec le modèle textuel
+        response = requests.post(API_URL_TEXT, json={"text": extracted_text})
+
+        if response.status_code == 200:
+            prediction = response.json().get("prediction")
+            confidence = response.json().get("confidence")
+
+            if prediction == "Fake News":
+                st.error(f"This news seems to be fake! 📰❌")
+            else:
+                st.success(f"This news seems to be real! 📰✅")
+
+            with st.expander("Extracted images:"):
+                st.markdown(f"{extracted_text}")
+                st.write(f"Confidence: {confidence * 100:.2f}%")
+        else:
+            st.error(f"Failed to get prediction. Status code: {response.status_code}")
+            st.write(response.text)
+
+    
+    if not extracted_text:
+        st.warning("No text detected.")
+    else:
+        st.markdown("#### 3) 🤖 Big model analysis on text")
 
         # Recherche Google
         google_results = check_fake_news_on_google(extracted_text)
@@ -267,7 +266,8 @@ if uploaded_file:
                     st.markdown(f"\n{justification}")
         else:
             st.error("Failed to get a response from OpenAI.")
-    
+
+        st.markdown("#### 4) 🤔 Going further...")
         #Display google results
         if google_results["combined_results"]:
             with st.expander("Google search results"):
