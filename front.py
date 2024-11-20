@@ -280,7 +280,7 @@ if uploaded_file:
                 st.success(f"\n this text seems to be TRUE (truth confidence: {confidence}")
                 st.markdown(f"\n{justification}")
             else:
-                st.error(f"\n this text seems to be FAKE (truth confidence: {confidence}")
+                st.error(f"\n this text seems to be FAKE (truth confidence: {confidence})")
                 st.markdown(f"\n{justification}")
         else:
             st.error("Failed to get a response from OpenAI.")
