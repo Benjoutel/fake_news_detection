@@ -240,13 +240,13 @@ if uploaded_file:
         st.warning("No text detected.")
     else:
         st.markdown("### Your judge ! Here is some help from Google and OpenAI:")
+
+        # Recherche Google
+        google_results = check_fake_news_on_google(extracted_text)
         
         # Enrichir le texte avec les résultats de recherche pour OpenAI
         enriched_text = f"{extracted_text}\n\nContext from Google Search:\n{google_results}"
         st.warning("OpenAI 👉 Enriching the text with Google Search results for openAI search (gpt-4o model used)...")
-
-        # Recherche Google
-        google_results = check_fake_news_on_google(extracted_text)
         
         # Appel OpenAI
         openai_response = openai_call_for_fakenews_check(enriched_text)
