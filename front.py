@@ -165,6 +165,9 @@ def check_fake_news_on_google(text):
             "error": str(e)
         }
 
+# Initialiser les variables
+embedded_images = []  # Liste vide par défaut pour les images extraites
+extracted_text = ""   # Texte vide par défaut
 
 ############# Interface Streamlit ####################
 
@@ -192,7 +195,28 @@ with col2:
 
 ## image analysis
 # Vérifier s'il y a des images extraites
+if not embedded_images:
+    st.write("No image detected.")
+else :
+    st.markdown("#### 1) 🏞️ Images extraction and analysis")
+    st.write("Image(s) detected.")
+    
+    for idx, img in enumerate(embedded_images):
+        # Afficher l'image extraite
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        with st.expander("Extracted images:"):
+            st.image(img_rgb, caption=f"Image integrated {idx + 1}", use_container_width=True)
 
+        # Analyser l'image extraite
+        prediction, confidence, prediction_name = analyze_image_with_api(img)
+
+        if prediction:
+            if prediction == "real":
+                st.success("This image looks real 👍🏻")
+            else:
+                st.error(f"This image looks AI producted 🤖⚙️🤖")
+
+            st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
 
 
 
