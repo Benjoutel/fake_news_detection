@@ -270,7 +270,7 @@ if uploaded_file:
     
         #Display google results
         if google_results["combined_results"]:
-            with st.expander("Google search results")
+            with st.expander("Google search results"):
             
                 # Afficher chaque URL individuellement
                 for url in google_results["combined_results"].split("\n"):
