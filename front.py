@@ -191,11 +191,11 @@ with col2:
         st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False)
 
 ## image analysis
-st.markdown("#### 1) 🏞️ Images extraction and analysis")
 # Vérifier s'il y a des images extraites
 if not embedded_images:
     st.write("No image detected.")
 else :
+    st.markdown("#### 1) 🏞️ Images extraction and analysis")
     st.write("Image(s) detected.")
     
     for idx, img in enumerate(embedded_images):
