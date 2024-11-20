@@ -31,16 +31,12 @@ def openai_call_for_fakenews_check(text):
     ## Define prompt
     prompt = f"""
     You are an expert assistant in fact-checking.  
-        Analyze the text below and assign a confidence score (between 0% and 100%) for each of the following categories:  
-        - TRUE: the text is factually correct and based on solid evidence.  
-        - POSSIBLE: the text could be true but lacks sufficient evidence.  
-        - LIKELY: the text seems credible but cannot be fully confirmed.  
-
-        Do not always respond with the same percentage like 0%, 70%, and 30%! Think critically based on your knowledge. If something is possible, the "TRUE" score cannot be 0% but should be at least higher, as it is plausible. Assume that a possible response is very likely to be true.  
-
-        Also, provide a brief justification (less than 100 words) for your scores.  
-
-        Text: "{text}" 
+    Analyze the text below and provide a single confidence score (between 0% and 100%) representing the likelihood that the text is true.  
+    
+    Format your response as follows:  
+    "According to OpenAI, this text is likely true with a confidence score of X%."  
+    
+    Text: "{text}"  
     """
     
     ## Define model call settings
