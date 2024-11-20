@@ -186,8 +186,9 @@ with col1:
         embedded_images = extract_images_from_screenshot(image_cv)
         extracted_text = extract_text_from_image(image_cv)
 
-        with col2:
-            st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False, width=100)
+with col2:
+    if uploaded_file:
+        st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False)
 
 ## image analysis
     st.markdown("#### 1) 🏞️ Images extraction and analysis")
