@@ -271,7 +271,17 @@ if uploaded_file:
         openai_response = openai_call_for_fakenews_check(enriched_text)
 
         if openai_response:
-            st.markdown(f"\n{openai_response}")
+            # Extraire les éléments de la réponse
+            lines = openai_response.split("\n")
+            confidence = lines[0].split(":")[1].strip()
+            justification = lines[1].split(":")[1].strip()
+            verdict = lines[2].split(":")[1].strip()
+            if verdict == "TRUE":
+                st.success(f"\n this text seems to be TRUE (truth confidence: {confidence}")
+                st.markdown(f"\n{justification}")
+            else:
+                st.error(f"\n this text seems to be FAKE (truth confidence: {confidence}")
+                st.markdown(f"\n{justification}")
         else:
             st.error("Failed to get a response from OpenAI.")
 
