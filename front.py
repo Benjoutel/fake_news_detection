@@ -168,26 +168,32 @@ def check_fake_news_on_google(text):
 
 ############# Interface Streamlit ####################
 
-uploaded_file = st.file_uploader("Upload your screenshot or image!", type=["png", "jpg", "jpeg"])
+## uploader
+col1, col2 = st.columns(2)
 
-if uploaded_file:
-    # Charger l'image avec PIL, vérifier et convertir pour OpenCV en BGR
-    image = Image.open(uploaded_file)
-    image_rgb = np.array(image)  # Conversion en format RGB natif
-    #st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False, width=200)  # Afficher pour vérifier les couleurs
+with col1:
+    uploaded_file = st.file_uploader("Upload your screenshot or image!", type=["png", "jpg", "jpeg"])
 
-    # Convertir l'image pour OpenCV en BGR
-    image_cv = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
-
-    # Extraire les images et le texte intégrés
-    embedded_images = extract_images_from_screenshot(image_cv)
-    extracted_text = extract_text_from_image(image_cv)
-
+    if uploaded_file:
+        # Charger l'image avec PIL, vérifier et convertir pour OpenCV en BGR
+        image = Image.open(uploaded_file)
+        image_rgb = np.array(image)  # Conversion en format RGB natif
     
+        # Convertir l'image pour OpenCV en BGR
+        image_cv = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
+    
+        # Extraire les images et le texte intégrés
+        embedded_images = extract_images_from_screenshot(image_cv)
+        extracted_text = extract_text_from_image(image_cv)
+
+        with col2:
+            st.image(image_rgb, caption="Image d'origine en RGB", use_container_width=False, width=100)
+
+## image analysis
     st.markdown("#### 1) 🏞️ Images extraction and analysis")
     # Vérifier s'il y a des images extraites
     if embedded_images:
-        st.warning("Image(s) detected.")
+        st.write("Image(s) detected.")
         
         for idx, img in enumerate(embedded_images):
             # Afficher l'image extraite
@@ -206,14 +212,14 @@ if uploaded_file:
 
                 st.write(f"Confidence : {confidence * 100:.2f}% 🦾")
     else:
-        st.warning("No image detected.")
+        st.write("No image detected.")
 
     
     if not extracted_text:
-        st.warning("No text detected.")
+        st.write("No text detected.")
     else:
         st.markdown("#### 2) 🔤 Text extraction and analysis")
-        st.warning("Text detected")
+        st.write("Text detected")
         
         # Analyse du texte avec le modèle textuel
         response = requests.post(API_URL_TEXT, json={"text": extracted_text})
@@ -245,7 +251,7 @@ if uploaded_file:
         
         # Enrichir le texte avec les résultats de recherche pour OpenAI
         enriched_text = f"{extracted_text}\n\nContext from Google Search:\n{google_results}"
-        st.warning("OpenAI 👉 Enriching the text with Google Search results for openAI search (gpt-4o model used)...")
+        st.write("👉 Enriching the text with Google Search results and asking openAI...")
         
         # Appel OpenAI
         openai_response = openai_call_for_fakenews_check(enriched_text)
@@ -257,11 +263,13 @@ if uploaded_file:
             justification = lines[1].split(":")[1].strip()
             verdict = lines[2].split(":")[1].strip()
             if verdict == "TRUE":
-                st.success(f"\n this text seems to be TRUE (truth confidence: {confidence}")
+                st.success(f"\n This text seems to be TRUE ✅ (truth confidence: {confidence}")
+                st.write(f"\n Confidence in truth: {confidence}")
                 with st.expander("Short explanation"):
                     st.markdown(f"\n{justification}")
             else:
-                st.error(f"\n this text seems to be FAKE (truth confidence: {confidence})")
+                st.error(f"\n This text seems to be FAKE ❌❌ (truth confidence: {confidence})")
+                st.write(f"\n Confidence in truth: {confidence}")
                 with st.expander("Short explanation"):
                     st.markdown(f"\n{justification}")
         else:
