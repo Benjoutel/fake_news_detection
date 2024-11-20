@@ -241,32 +241,13 @@ if uploaded_file:
     else:
         st.markdown("### Your judge ! Here is some help from Google and OpenAI:")
         
-        # Afficher les résultats sur Streamlit
-        st.warning("Google search:")
-        
-        # Recherche Google
-        google_results = check_fake_news_on_google(extracted_text)
-
-        if google_results["combined_results"]:
-            st.write("Google search results :")
-            
-            # Afficher chaque URL individuellement
-            for url in google_results["combined_results"].split("\n"):
-                st.write(f"- {url}")
-
-            # Afficher les sources fiables détectées
-            if google_results["trusted_sources"]:
-                sources = google_results["trusted_sources"]
-                st.write(f"Trusted sources used : {sources}")
-            else:
-                st.info("No trusted source detected in the search result.")
-        else:
-            st.error("No results on Google.")
-                
         # Enrichir le texte avec les résultats de recherche pour OpenAI
         enriched_text = f"{extracted_text}\n\nContext from Google Search:\n{google_results}"
         st.warning("OpenAI 👉 Enriching the text with Google Search results for openAI search (gpt-4o model used)...")
 
+        # Recherche Google
+        google_results = check_fake_news_on_google(extracted_text)
+        
         # Appel OpenAI
         openai_response = openai_call_for_fakenews_check(enriched_text)
 
@@ -278,12 +259,31 @@ if uploaded_file:
             verdict = lines[2].split(":")[1].strip()
             if verdict == "TRUE":
                 st.success(f"\n this text seems to be TRUE (truth confidence: {confidence}")
-                st.markdown(f"\n{justification}")
+                with st.expander("Short explanation"):
+                    st.markdown(f"\n{justification}")
             else:
                 st.error(f"\n this text seems to be FAKE (truth confidence: {confidence})")
-                st.markdown(f"\n{justification}")
+                with st.expander("Short explanation"):
+                    st.markdown(f"\n{justification}")
         else:
             st.error("Failed to get a response from OpenAI.")
+    
+        #Display google results
+        if google_results["combined_results"]:
+            with st.expander("Google search results")
+            
+                # Afficher chaque URL individuellement
+                for url in google_results["combined_results"].split("\n"):
+                    st.write(f"- {url}")
+    
+                # Afficher les sources fiables détectées
+                if google_results["trusted_sources"]:
+                    sources = google_results["trusted_sources"]
+                    st.write(f"Trusted sources used : {sources}")
+                else:
+                    st.info("No trusted source detected in the search result.")
+        else:
+            st.error("No results on Google.")
 
     
 
