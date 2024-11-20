@@ -157,13 +157,13 @@ def check_fake_news_on_google(text):
 
             return response
         else:
-            st.write("Aucun résultat trouvé.")
+            st.write("No result.")
             return {
                 "combined_results": "",
                 "trusted_sources": []
             }
     except Exception as e:
-        st.error(f"Erreur lors de la recherche Google : {e}")
+        st.error(f"An error occurred on google search : {e}")
         return {
             "combined_results": "",
             "trusted_sources": [],
@@ -248,7 +248,7 @@ if uploaded_file:
         google_results = check_fake_news_on_google(extracted_text)
 
         if google_results["combined_results"]:
-            st.write("Voici les résultats trouvés sur Google :")
+            st.write("Google search results :")
             
             # Afficher chaque URL individuellement
             for url in google_results["combined_results"].split("\n"):
@@ -259,7 +259,7 @@ if uploaded_file:
                 sources = google_results["trusted_sources"]
                 st.write(f"Trusted sources used : {sources}")
             else:
-                st.info("Aucune source de vérification fiable détectée.")
+                st.info("No trusted source detected in the search result.")
         else:
             st.error("No results on Google.")
                 
