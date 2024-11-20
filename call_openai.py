@@ -22,21 +22,26 @@ headers = {
     "Authorization": f"Bearer {API_KEY}"
 }
 
-def api_key_testing():
-    print(API_KEY)
+#def api_key_testing():
+#    print(API_KEY)
 
 
 ## Fonction pour analyser un texte
 def openai_call_for_fakenews_check(text):
     ## Define prompt
     prompt = f"""
-    You are an expert assistant in fact-checking.  
-    Analyze the text below and provide a single confidence score (between 0% and 100%) representing the likelihood that the text is true.  
-    
-    Format your response as follows:  
-    "According to OpenAI, this text is likely true with a confidence score of X%."  
-    
-    Text: "{text}"  
+    You are an expert assistant in fact-checking.
+    Analyze the text below and provide:
+    1. A confidence score (0% to 100%) representing how likely the text is true.
+    2. A brief justification (max 50 words) explaining your reasoning.
+    3. A final verdict: TRUE if the score is above 50%, FALSE otherwise.
+
+    Respond in this format:
+    - Confidence: X%
+    - Justification: [Your explanation]
+    - Verdict: [TRUE/FALSE]
+
+    Text: "{text}"
     """
     
     ## Define model call settings
